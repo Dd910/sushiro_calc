@@ -27,6 +27,8 @@
       flex-direction: column;
       height: 100vh;
       background: #fafafa;
+      touch-action: manipulation;
+      -ms-touch-action: manipulation;
     }
     header {
       display: flex;
@@ -40,6 +42,10 @@
       position: absolute; right: 12px; top: 8px;
       border: none; background: transparent; font-size: 1.4rem; cursor: pointer;
     }
+    button, .plate {
+      touch-action: manipulation;
+    }
+
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px 12px; }
     .plate {
       width: 100%; aspect-ratio: 1 / 1; border-radius: 50%;
