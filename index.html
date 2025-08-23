@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sushi Price Calculator</title>
+  <link rel="manifest" href="manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 { color: #333; }
+    .buttons { margin: 20px 0; }
+    button {
+      width: 120px; height: 120px;
+      border: none; border-radius: 50%;
+      font-size: 16px; font-weight: bold;
+      margin: 10px; color: white;
+      cursor: pointer; transition: transform 0.1s ease;
+    }
+    button:active { transform: scale(0.9); }
+    .red { background: #e74c3c; }
+    .grey { background: #7f8c8d; }
+    .gold { background: #f1c40f; color: black; }
+    .black { background: #2c3e50; }
+    .custom { margin-top: 20px; }
+    input[type="number"] {
+      padding: 5px; font-size: 16px; width: 120px;
+    }
+    .utility { margin-top: 20px; }
+    .utility button {
+      width: auto; height: auto;
+      border-radius: 8px; padding: 10px 20px;
+      font-size: 14px; margin: 5px;
+    }
+    .order-list {
+      margin-top: 30px; max-height: 200px; overflow-y: auto;
+      border: 1px solid #ddd; background: #fff; width: 300px;
+      margin-left: auto; margin-right: auto;
+      border-radius: 8px; padding: 10px; text-align: left;
+    }
+    .order-list p { margin: 5px 0; font-size: 16px; }
+    .results { margin-top: 30px; font-size: 20px; }
+  </style>
+</head>
+<body>
+
+  <h1>🍣 Sushi Price Calculator</h1>
+  <div class="buttons">
+    <button class="red" onclick="addPlate(2.30, 'Red Plate')">$2.30</button>
+    <button class="grey" onclick="addPlate(2.90, 'Grey Plate')">$2.90</button>
+    <button class="gold" onclick="addPlate(3.90, 'Gold Plate')">$3.90</button>
+    <button class="black" onclick="addPlate(4.90, 'Black Plate')">$4.90</button>
+  </div>
+
+  <div class="custom">
+    <input type="number" id="customPrice" step="0.01" placeholder="Custom price">
+    <button onclick="addCustom()">Add</button>
+  </div>
+
+  <div class="utility">
+    <button onclick="removeLast()">↩️ Remove Last Plate</button>
+    <button onclick="resetAll()">🔄 Reset</button>
+  </div>
+
+  <div class="order-list" id="orderList">
+    <p><i>No plates added yet</i></p>
+  </div>
+
+  <div class="results">
+    <p>Subtotal: $<span id="subtotal">0.00</span></p>
+    <p>+ 10% Service Charge: $<span id="service">0.00</span></p>
+    <p>+ 9% GST: $<span id="gst">0.00</span></p>
+    <hr style="width:200px;">
+    <p><b>Total: $<span id="total">0.00</span></b></p>
+  </div>
+
+  <script>
+    let subtotal = 0;
+    let history = [];
+
+    function addPlate(price, label) {
+      subtotal += price;
+      history.push({ price: price, label: label });
+      updateTotals(); updateList();
+    }
+    function addCustom() {
+      let custom = parseFloat(document.getElementById("customPrice").value);
+      if (!isNaN(custom) && custom > 0) {
+        subtotal += custom;
+        history.push({ price: custom, label: "Custom Item" });
+        document.getElementById("customPrice").value = "";
+        updateTotals(); updateList();
+      }
+    }
+    function removeLast() {
+      if (history.length > 0) {
+        let last = history.pop();
+        subtotal -= last.price;
+        updateTotals(); updateList();
+      }
+    }
+    function resetAll() {
+      subtotal = 0; history = [];
+      updateTotals(); updateList();
+    }
+    function updateTotals() {
+      let service = subtotal * 0.10;
+      let afterService = subtotal + service;
+      let gst = afterService * 0.09;
+      let total = afterService + gst;
+      document.getElementById("subtotal").innerText = subtotal.toFixed(2);
+      document.getElementById("service").innerText = service.toFixed(2);
+      document.getElementById("gst").innerText = gst.toFixed(2);
+      document.getElementById("total").innerText = total.toFixed(2);
+    }
+    function updateList() {
+      let list = document.getElementById("orderList");
+      list.innerHTML = "";
+      if (history.length === 0) {
+        list.innerHTML = "<p><i>No plates added yet</i></p>";
+        return;
+      }
+      let grouped = {};
+      history.forEach(item => {
+        let key = item.label + "_" + item.price;
+        if (!grouped[key]) {
+          grouped[key] = { label: item.label, price: item.price, count: 0 };
+        }
+        grouped[key].count++;
+      });
+      Object.values(grouped).forEach(item => {
+        let p = document.createElement("p");
+        let lineTotal = item.count * item.price;
+        p.textContent = `${item.label} × ${item.count} = $${lineTotal.toFixed(2)}`;
+        list.appendChild(p);
+      });
+    }
+  </script>
+</body>
+</html>
