@@ -14,7 +14,49 @@
           console.log('Service worker updated.');
         });
       });
-    }
+      }
+      function applyPlaceholderImages() {
+          const use = document.getElementById('togglePlaceholders').checked;
+          const custom = JSON.parse(localStorage.getItem(STORAGE_KEYS.customImages) || '{}');
+          const imgs = {
+              red: custom.red || DEFAULT_IMAGES.red,
+              grey: custom.grey || DEFAULT_IMAGES.grey,
+              gold: custom.gold || DEFAULT_IMAGES.gold,
+              black: custom.black || DEFAULT_IMAGES.black
+          };
+          const map = {
+              red: document.getElementById('btn-red'),
+              grey: document.getElementById('btn-grey'),
+              gold: document.getElementById('btn-gold'),
+              black: document.getElementById('btn-black')
+          };
+          const prices = { red: '$2.30', grey: '$2.90', gold: '$3.90', black: '$4.90' };
+
+          Object.keys(map).forEach(key => {
+              const btn = map[key];
+              if (use && imgs[key]) {
+                  btn.style.backgroundImage = `url('${imgs[key]}')`;
+                  btn.textContent = '';
+              } else {
+                  btn.style.backgroundImage = 'none';
+                  btn.textContent = `🍣 ${prices[key]}`;
+              }
+              // ensure button always has a visible color if no image
+              if (!btn.style.backgroundImage) {
+                  const colors = { red: '#e74c3c', grey: '#7f8c8d', gold: '#f1c40f', black: '#2c3e50' };
+                  btn.style.backgroundColor = colors[key];
+              }
+          });
+
+          // update preview thumbnails
+          ['red', 'grey', 'gold', 'black'].forEach(key => {
+              const el = document.getElementById('preview-' + key);
+              el.style.backgroundImage = `url('${imgs[key]}')`;
+          });
+
+          localStorage.setItem(STORAGE_KEYS.usePlaceholders, use ? '1' : '0');
+      }
+
   </script>
   <style>
     :root { --accent:#e74c3c; }
@@ -166,10 +208,10 @@
 
   <script>
     const DEFAULT_IMAGES = {
-      red: 'assets/plate-red.png',
-      grey: 'assets/plate-grey.png',
-      gold: 'assets/plate-gold.png',
-      black: 'assets/plate-black.png'
+      red: 'assets/red.png',
+      grey: 'assets/grey.png',
+      gold: 'assets/gold.png',
+      black: 'assets/black.png'
     };
     const STORAGE_KEYS = {
       usePlaceholders: 'usePlaceholders',
@@ -268,8 +310,18 @@
     document.getElementById('openSettings').addEventListener('click', ()=> drawer.classList.add('open'));
     document.getElementById('closeSettings').addEventListener('click', ()=> drawer.classList.remove('open'));
 
-    const savedToggle = localStorage.getItem('usePlaceholders');
-    document.getElementById('togglePlaceholders').checked = savedToggle === '1';
+      // Default to ON if no value is saved
+      const savedToggle = localStorage.getItem(STORAGE_KEYS.usePlaceholders);
+      const toggleCheckbox = document.getElementById('togglePlaceholders');
+      if (savedToggle === null) {
+          toggleCheckbox.checked = true; // default ON
+      } else {
+          toggleCheckbox.checked = savedToggle === '1';
+      }
+
+      // Apply images immediately
+      applyPlaceholderImages();
+
 
     function handleUpload(inputId, key){
       const input = document.getElementById(inputId);
