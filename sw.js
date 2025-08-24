@@ -6,10 +6,10 @@ const CORE_ASSETS = [
   'sw.js',
   'assets/icon-192.png',
   'assets/icon-512.png',
-  'assets/plate-red.png',
-  'assets/plate-grey.png',
-  'assets/plate-gold.png',
-  'assets/plate-black.png'
+  'assets/red.png',
+  'assets/grey.png',
+  'assets/gold.png',
+  'assets/black.png'
 ];
 
 self.addEventListener('install', (event) => {
