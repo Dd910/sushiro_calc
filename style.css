@@ -1,3 +1,7 @@
+html, body {
+  touch-action: manipulation; /* Prevent double-tap zoom, but allow scroll and tap */
+}
+
 .journey {
     display: flex;
     flex-direction: column;
@@ -643,3 +647,4 @@ button:focus {
 [aria-hidden="true"] {
     pointer-events: none;
 }
+
