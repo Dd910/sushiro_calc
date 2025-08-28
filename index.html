@@ -1,361 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sushi Price Calculator</title>
-  <meta name="theme-color" content="#e74c3c">
-  <link rel="manifest" href="manifest.json">
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js');
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          console.log('Service worker updated.');
-        });
-      });
-      }
-      function applyPlaceholderImages() {
-          const use = document.getElementById('togglePlaceholders').checked;
-          const custom = JSON.parse(localStorage.getItem(STORAGE_KEYS.customImages) || '{}');
-          const imgs = {
-              red: custom.red || DEFAULT_IMAGES.red,
-              grey: custom.grey || DEFAULT_IMAGES.grey,
-              gold: custom.gold || DEFAULT_IMAGES.gold,
-              black: custom.black || DEFAULT_IMAGES.black
-          };
-          const map = {
-              red: document.getElementById('btn-red'),
-              grey: document.getElementById('btn-grey'),
-              gold: document.getElementById('btn-gold'),
-              black: document.getElementById('btn-black')
-          };
-          const prices = { red: '$2.30', grey: '$2.90', gold: '$3.90', black: '$4.90' };
-
-          Object.keys(map).forEach(key => {
-              const btn = map[key];
-              if (use && imgs[key]) {
-                  btn.style.backgroundImage = `url('${imgs[key]}')`;
-                  btn.textContent = '';
-              } else {
-                  btn.style.backgroundImage = 'none';
-                  btn.textContent = `🍣 ${prices[key]}`;
-              }
-              // ensure button always has a visible color if no image
-              if (!btn.style.backgroundImage) {
-                  const colors = { red: '#e74c3c', grey: '#7f8c8d', gold: '#f1c40f', black: '#2c3e50' };
-                  btn.style.backgroundColor = colors[key];
-              }
-          });
-
-          // update preview thumbnails
-          ['red', 'grey', 'gold', 'black'].forEach(key => {
-              const el = document.getElementById('preview-' + key);
-              el.style.backgroundImage = `url('${imgs[key]}')`;
-          });
-
-          localStorage.setItem(STORAGE_KEYS.usePlaceholders, use ? '1' : '0');
-      }
-
-  </script>
-  <style>
-    :root { --accent:#e74c3c; }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      background: #fafafa;
-      touch-action: manipulation;
-      -ms-touch-action: manipulation;
-    }
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      padding: 10px 16px;
-    }
-    h1 { margin: 0; font-size: 1.2rem; }
-    .settings-btn {
-      position: absolute; right: 12px; top: 8px;
-      border: none; background: transparent; font-size: 1.4rem; cursor: pointer;
-    }
-    button, .plate {
-      touch-action: manipulation;
-    }
-
-    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px 12px; }
-    .plate {
-      width: 100%; aspect-ratio: 1 / 1; border-radius: 50%;
-      font-size: 1rem; border: none; cursor: pointer; color: white;
-      display: flex; align-items: center; justify-content: center;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-      background-size: cover; background-position: center;
-    }
-    .plate:active { transform: scale(0.96); }
-    .red { background-color: #e74c3c; }
-    .grey { background-color: #7f8c8d; }
-    .gold { background-color: #f1c40f; color: #000; }
-    .black { background-color: #2c3e50; }
-    .custom { margin: 6px 12px 0; display: flex; gap: 8px; justify-content: center; }
-    .custom input { width: 110px; padding: 8px; font-size: 1rem; border: 1px solid #ccc; border-radius: 6px; background: #fff; }
-    .custom button { padding: 8px 12px; font-size: 1rem; border: none; border-radius: 6px; background: #27ae60; color: white; cursor: pointer; }
-    .utility { display: flex; justify-content: center; gap: 10px; margin: 6px 0 4px; }
-    .utility button { padding: 8px 12px; font-size: 0.95rem; border: none; border-radius: 6px; background: #2980b9; color: white; cursor: pointer; }
-    .summary { flex: 1; overflow-y: auto; padding: 10px 12px 70px; border-top: 1px solid #eaeaea; background: #fff; margin-top: 4px; }
-    .row { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed #eee; }
-    .muted { color:#666; font-size:0.9rem; }
-    .totals { position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 12px; padding-bottom: 20px; background: #f9f9f9; border-top: 2px solid #333; text-align: center; font-size: 1.05rem; z-index: 10; }
-    .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 92%; max-width: 420px; background: #ffffff; box-shadow: -2px 0 12px rgba(0,0,0,0.15); transform: translateX(100%); transition: transform 0.25s ease; z-index: 50; display:flex; flex-direction:column; }
-    .drawer.open { transform: translateX(0); }
-    .drawer header { display:flex; align-items:center; justify-content:space-between; padding: 14px 16px; border-bottom:1px solid #eee; }
-    .drawer h2 { margin:0; font-size:1.1rem; }
-    .drawer .content { padding: 12px 16px; overflow-y:auto; }
-    .toggle { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-    .upload-row { display:grid; grid-template-columns: 56px 1fr; gap:12px; align-items:center; padding:10px 0; border-bottom:1px solid #f1f1f1; }
-    .thumb { width:56px; height:56px; border-radius:8px; background:#f3f3f3; background-size:cover; background-position:center; border:1px solid #ddd; }
-    .row-title { font-weight:600; }
-    .reset-btn { margin-top: 10px; padding: 8px 12px; background:#b33939; border:none; color:#fff; border-radius:6px; cursor:pointer; }
-    .close-btn { border:none; background:transparent; font-size:1.4rem; cursor:pointer; }
-    .small { font-size:0.85rem; color:#666; }
-  </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <title>Order Dashboard</title>
+    <link rel="stylesheet" href="globals.css" />
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>🍣 Sushi Price Calculator</h1>
-    <button class="settings-btn" id="openSettings" aria-label="Open settings">⚙️</button>
-  </header>
-
-  <div class="grid">
-    <button class="plate red" id="btn-red"   onclick="addPlate(2.30, 'Red Plate')">🍣 $2.30</button>
-    <button class="plate grey" id="btn-grey"  onclick="addPlate(2.90, 'Grey Plate')">🍣 $2.90</button>
-    <button class="plate gold" id="btn-gold"  onclick="addPlate(3.90, 'Gold Plate')">🍣 $3.90</button>
-    <button class="plate black" id="btn-black" onclick="addPlate(4.90, 'Black Plate')">🍣 $4.90</button>
-  </div>
-
-  <div class="custom">
-    <input type="number" id="customPrice" step="0.01" placeholder="Custom $" />
-    <button onclick="addCustom()">Add</button>
-  </div>
-
-  <div class="utility">
-    <button onclick="removeLast()">↩️ Remove Last Plate</button>
-    <button onclick="resetAll()">🔄 Reset</button>
-  </div>
-
-  <div class="summary" id="summary">
-    <div class="muted">No plates added yet.</div>
-  </div>
-
-  <div class="totals" id="totals">Total: $0.00</div>
-
-  <aside class="drawer" id="drawer">
-    <header>
-      <h2>Settings</h2>
-      <button class="close-btn" id="closeSettings" aria-label="Close settings">✖️</button>
-    </header>
-    <div class="content">
-      <div class="toggle">
-        <div>
-          <div class="row-title">Use placeholder images on buttons</div>
-          <div class="small">When ON, plate buttons show images instead of plain colors.</div>
+    <script src="script.js"></script>
+    <main class="journey" data-model-id="1:2">
+        <section class="frame">
+            <div class="div">
+                <img class="img" src="https://c.animaapp.com/V0etzIc5/img/frame-269410.svg" alt="Company Logo" />
+                <div class="group-wrapper">
+                    <div class="group">
+                        <header class="div-wrapper">
+                            <h1 class="text-wrapper">Dashboard</h1>
+                        </header>
+                        <div class="frame-2">
+                            <section class="frame-3">
+                                <div class="frame-4">
+                                    <div class="text-wrapper-2">Total Cost:</div>
+                                    <div class="text-wrapper-3">$0.00</div>
+                                </div>
+                                <div class="frame-wrapper">
+                                    <button class="frame-5" type="button" aria-label="View cost breakdown">
+                                        <span class="text-wrapper-4">View Breakdown</span>
+                                    </button>
+                                </div>
+                            </section>
+                            <section class="frame-6">
+                                <div class="frame-7">
+                                    <div class="frame-8">
+                                        <div class="frame-9">
+                                            <h2 class="text-wrapper-2">Add to your Order:</h2>
+                                        </div>
+                                    </div>
+                                    <div class="frame-10" role="group" aria-label="Product selection">
+                                        <article class="frame-11">
+                                            <div class="image-wrapper">
+                                                <img class="image"
+                                                     src="https://c.animaapp.com/V0etzIc5/img/image-466@2x.png"
+                                                     alt="Product image" />
+                                            </div>
+                                            <div class="frame-13">
+                                                <div class="text-wrapper-5">$2.30</div>
+                                                <div class="frame-14" role="group" aria-label="Quantity controls">
+                                                    <button class="frame-wrapper" type="button" aria-label="Increase quantity">
+                                                        <div class="frame-15">
+                                                            <span class="text-wrapper-6">+</span>
+                                                        </div>
+                                                    </button>
+                                                    <div class="frame-16" role="status" aria-label="Current quantity">
+                                                        <span class="text-wrapper-6">0</span>
+                                                    </div>
+                                                    <button class="frame-17" type="button" aria-label="Decrease quantity">
+                                                        <span class="text-wrapper-6">-</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </article>
+                                        <article class="frame-11">
+                                            <div class="frame-19" role="img" aria-label="Product image"></div>
+                                            <div class="frame-13">
+                                                <div class="text-wrapper-5">$2.90</div>
+                                                <div class="frame-14" role="group" aria-label="Quantity controls">
+                                                    <button class="frame-wrapper" type="button" aria-label="Increase quantity">
+                                                        <div class="frame-15">
+                                                            <span class="text-wrapper-6">+</span>
+                                                        </div>
+                                                    </button>
+                                                    <div class="frame-16" role="status" aria-label="Current quantity">
+                                                        <span class="text-wrapper-6">0</span>
+                                                    </div>
+                                                    <button class="frame-17" type="button" aria-label="Decrease quantity">
+                                                        <span class="text-wrapper-6">-</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </article>
+                                        <article class="frame-11">
+                                            <div class="frame-18" role="img" aria-label="Product image"></div>
+                                            <div class="frame-13">
+                                                <div class="text-wrapper-5">$3.90</div>
+                                                <div class="frame-14" role="group" aria-label="Quantity controls">
+                                                    <button class="frame-wrapper" type="button" aria-label="Increase quantity">
+                                                        <div class="frame-15">
+                                                            <span class="text-wrapper-6">+</span>
+                                                        </div>
+                                                    </button>
+                                                    <div class="frame-16" role="status" aria-label="Current quantity">
+                                                        <span class="text-wrapper-6">0</span>
+                                                    </div>
+                                                    <button class="frame-17" type="button" aria-label="Decrease quantity">
+                                                        <span class="text-wrapper-6">-</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </article>
+                                        <article class="frame-11">
+                                            <div class="frame-12" role="img" aria-label="Product image"></div>
+                                            <div class="frame-13">
+                                                <div class="text-wrapper-5">$4.90</div>
+                                                <div class="frame-14" role="group" aria-label="Quantity controls">
+                                                    <button class="frame-wrapper" type="button" aria-label="Increase quantity">
+                                                        <div class="frame-15">
+                                                            <span class="text-wrapper-6">+</span>
+                                                        </div>
+                                                    </button>
+                                                    <div class="frame-16" role="status" aria-label="Current quantity">
+                                                        <span class="text-wrapper-6">0</span>
+                                                    </div>
+                                                    <button class="frame-17" type="button" aria-label="Decrease quantity">
+                                                        <span class="text-wrapper-6">-</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    </div>
+                                </div>
+                                <section class="frame-20">
+                                    <div class="frame-21">
+                                        <div class="frame-22">
+                                            <label class="text-wrapper-7" for="custom-amount">Add Custom Amount:</label>
+                                            <input type="text" id="custom-amount" class="text-wrapper-5" value="$2.90" readonly />
+                                        </div>
+                                    </div>
+                                </section>
+                                <section class="frame-23">
+                                    <header class="frame-24">
+                                        <h2 class="text-wrapper-2">Order History</h2>
+                                        <button class="text-wrapper-8" type="button" aria-label="View all order history" style="display: none;">View All</button>
+                                    </header>
+                                </section>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="rectangle" aria-hidden="true"></div>
+        <div class="cost-popup" role="dialog" aria-modal="true" style="display: none;">
+            <div class="cost-popup-content">
+                <h2>Cost Breakdown</h2>
+                <div class="breakdown-row">
+                    <span>Before Tax:</span><span class="before-tax">$0.00</span>
+                </div>
+                <div class="breakdown-row">
+                    <span>Service Charge:</span><span class="service-charge">$0.00</span>
+                </div>
+                <div class="breakdown-row">
+                    <span>GST:</span><span class="gst">$0.00</span>
+                </div>
+                <div class="breakdown-row total-row">
+                    <span>Total:</span><span class="total-after-tax">$0.00</span>
+                </div>
+                <button class="close-popup">Close</button>
+            </div>
         </div>
-        <label><input type="checkbox" id="togglePlaceholders"></label>
-      </div>
-
-      <div class="small" style="margin:8px 0 12px;">Upload custom images (PNG/JPG). They’re saved locally and work offline.</div>
-
-      <div class="upload-row">
-        <div class="thumb" id="preview-red"></div>
-        <div>
-          <div class="row-title">Red Plate</div>
-          <input type="file" id="upload-red" accept="image/*">
-        </div>
-      </div>
-
-      <div class="upload-row">
-        <div class="thumb" id="preview-grey"></div>
-        <div>
-          <div class="row-title">Grey Plate</div>
-          <input type="file" id="upload-grey" accept="image/*">
-        </div>
-      </div>
-
-      <div class="upload-row">
-        <div class="thumb" id="preview-gold"></div>
-        <div>
-          <div class="row-title">Gold Plate</div>
-          <input type="file" id="upload-gold" accept="image/*">
-        </div>
-      </div>
-
-      <div class="upload-row">
-        <div class="thumb" id="preview-black"></div>
-        <div>
-          <div class="row-title">Black Plate</div>
-          <input type="file" id="upload-black" accept="image/*">
-        </div>
-      </div>
-
-      <button class="reset-btn" id="resetDefaults">Reset placeholders to defaults</button>
-    </div>
-  </aside>
-
-  <script>
-    const DEFAULT_IMAGES = {
-      red: 'assets/red.png',
-      grey: 'assets/grey.png',
-      gold: 'assets/gold.png',
-      black: 'assets/black.png'
-    };
-    const STORAGE_KEYS = {
-      usePlaceholders: 'usePlaceholders',
-      customImages: 'customImages',
-      history: 'history'
-    };
-
-    let history = JSON.parse(localStorage.getItem(STORAGE_KEYS.history) || '[]');
-    function saveHistory(){ localStorage.setItem(STORAGE_KEYS.history, JSON.stringify(history)); }
-
-    function applyPlaceholderImages() {
-      const use = document.getElementById('togglePlaceholders').checked;
-      const custom = JSON.parse(localStorage.getItem(STORAGE_KEYS.customImages) || '{}');
-      const imgs = {
-        red: custom.red || DEFAULT_IMAGES.red,
-        grey: custom.grey || DEFAULT_IMAGES.grey,
-        gold: custom.gold || DEFAULT_IMAGES.gold,
-        black: custom.black || DEFAULT_IMAGES.black
-      };
-      const map = {
-        red: document.getElementById('btn-red'),
-        grey: document.getElementById('btn-grey'),
-        gold: document.getElementById('btn-gold'),
-        black: document.getElementById('btn-black')
-      };
-      Object.keys(map).forEach(key => {
-        const btn = map[key];
-        if (use) {
-          btn.style.backgroundImage = `url('${imgs[key]}')`;
-          btn.textContent = '';
-        } else {
-          btn.style.backgroundImage = 'none';
-          const prices = {red:'$2.30', grey:'$2.90', gold:'$3.90', black:'$4.90'};
-          btn.textContent = '🍣 ' + prices[key];
-        }
-      });
-      ['red','grey','gold','black'].forEach(key => {
-        const el = document.getElementById('preview-' + key);
-        el.style.backgroundImage = `url('${imgs[key]}')`;
-      });
-      localStorage.setItem(STORAGE_KEYS.usePlaceholders, use ? '1' : '0');
-    }
-
-    function addPlate(price, label) {
-      history.push({price, label});
-      saveHistory();
-      updateSummary();
-    }
-    function addCustom() {
-      const input = document.getElementById('customPrice');
-      const v = parseFloat(input.value);
-      if (!isNaN(v) && v > 0) {
-        history.push({price:v, label:'Custom Item'});
-        input.value='';
-        saveHistory();
-        updateSummary();
-      }
-    }
-    function removeLast() {
-      if (history.length>0) { history.pop(); saveHistory(); updateSummary(); }
-    }
-    function resetAll() { history = []; saveHistory(); updateSummary(); }
-
-    function updateSummary() {
-      const container = document.getElementById('summary');
-      if (history.length === 0) {
-        container.innerHTML = '<div class="muted">No plates added yet.</div>';
-        document.getElementById('totals').textContent = 'Total: $0.00';
-        return;
-      }
-      const grouped = {};
-      history.forEach(item => {
-        const key = item.label + '_' + item.price;
-        if (!grouped[key]) grouped[key] = {label:item.label, price:item.price, count:0};
-        grouped[key].count++;
-      });
-      container.innerHTML = '';
-      let subtotal = 0;
-      Object.values(grouped).forEach(item => {
-        const line = item.count * item.price;
-        subtotal += line;
-        const row = document.createElement('div');
-        row.className = 'row';
-        row.innerHTML = `<div>${item.label} × ${item.count}</div><div>$${line.toFixed(2)}</div>`;
-        container.appendChild(row);
-      });
-      const service = subtotal * 0.10;
-      const afterService = subtotal + service;
-      const gst = afterService * 0.09;
-      const total = afterService + gst;
-      document.getElementById('totals').textContent =
-        `Subtotal: $${subtotal.toFixed(2)} | +Svc: $${service.toFixed(2)} | +GST: $${gst.toFixed(2)} | Final: $${total.toFixed(2)}`;
-    }
-
-    const drawer = document.getElementById('drawer');
-    document.getElementById('openSettings').addEventListener('click', ()=> drawer.classList.add('open'));
-    document.getElementById('closeSettings').addEventListener('click', ()=> drawer.classList.remove('open'));
-
-      // Default to ON if no value is saved
-      const savedToggle = localStorage.getItem(STORAGE_KEYS.usePlaceholders);
-      const toggleCheckbox = document.getElementById('togglePlaceholders');
-      if (savedToggle === null) {
-          toggleCheckbox.checked = true; // default ON
-      } else {
-          toggleCheckbox.checked = savedToggle === '1';
-      }
-
-      // Apply images immediately
-      applyPlaceholderImages();
-
-
-    function handleUpload(inputId, key){
-      const input = document.getElementById(inputId);
-      input.addEventListener('change', e => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = () => {
-          const custom = JSON.parse(localStorage.getItem('customImages') || '{}');
-          custom[key] = reader.result;
-          localStorage.setItem('customImages', JSON.stringify(custom));
-          applyPlaceholderImages();
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-    handleUpload('upload-red','red');
-    handleUpload('upload-grey','grey');
-    handleUpload('upload-gold','gold');
-    handleUpload('upload-black','black');
-
-    document.getElementById('resetDefaults').addEventListener('click', ()=>{
-      localStorage.removeItem('customImages');
-      applyPlaceholderImages();
-    });
-    document.getElementById('togglePlaceholders').addEventListener('change', applyPlaceholderImages);
-
-    applyPlaceholderImages();
-    updateSummary();
-
-    // Example to add extra assets to SW cache later:
-    // navigator.serviceWorker?.ready.then(reg => {
-    //   reg.active?.postMessage({type:'cache-add', urls:['assets/another-image.png']});
-    // });
-  </script>
+    </main>
 </body>
 </html>
