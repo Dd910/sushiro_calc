@@ -125,8 +125,16 @@
                                     <div class="frame-21">
                                         <div class="frame-22">
                                             <label class="text-wrapper-7" for="custom-amount">Add Custom Amount:</label>
-                                            <input type="text" id="custom-amount" class="text-wrapper-5" value="$2.90" readonly />
+                                            <input type="text" id="custom-amount" class="custom-amount-input" placeholder="$0.00" />
+                                        <div class="custom-amount-submit">
+                                            <button class="frame-wrapper" type="button" aria-label="Submit custom amount">
+                                                <div class="frame-27">
+                                                    <span class="text-wrapper-6">Submit</span>
+                                                </div>
+                                            </button>
                                         </div>
+                                        </div>
+
                                     </div>
                                 </section>
                                 <section class="frame-23">
@@ -155,11 +163,21 @@
                     <span>GST:</span><span class="gst">$0.00</span>
                 </div>
                 <div class="breakdown-row total-row">
-                    <span>Total:</span><span class="total-after-tax">$0.00</span>
+                    <span>Total:</span><span class="after-tax">$0.00</span>
                 </div>
                 <button class="close-popup">Close</button>
             </div>
         </div>
     </main>
+<div class="remove-all-popup" id="removeAllPopup">
+  <div class="remove-all-popup-content">
+    <h2>Remove all items?</h2>
+    <div class="remove-all-buttons">
+      <button class="cancel-remove" id="cancelRemoveAll">Cancel</button>
+      <button class="confirm-remove" id="confirmRemoveAll">Remove All</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
