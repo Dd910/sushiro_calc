@@ -1,6 +1,7 @@
-﻿class OrderDashboard {
+class OrderDashboard {
     constructor() {
         this.orderItems = [];
+        this.isAnimatingRemoveAll = false; // flag to block adding items during Remove All
 
         // Configure service charge and GST rates here
         this.serviceChargeRate = 0.10; // 10%
@@ -38,13 +39,8 @@
             const priceElement = product.querySelector('.text-wrapper-5');
 
             if (productImage && priceElement) {
-                productImage.addEventListener('click', () => {
-                    this.addToOrder(index);
-                });
-
-                priceElement.addEventListener('click', () => {
-                    this.addToOrder(index);
-                });
+                productImage.addEventListener('click', () => this.addToOrder(index));
+                priceElement.addEventListener('click', () => this.addToOrder(index));
             }
         });
 
@@ -52,12 +48,23 @@
         document.addEventListener('click', (e) => {
             if (e.target.closest('.frame-27')) {
                 const orderItem = e.target.closest('article');
-                const index = Array.from(orderItem.parentElement.children).indexOf(orderItem) - 1; // -1 for header
-                if (index >= 0) {
-                    this.removeFromOrder(index);
+                if (orderItem) {
+                    const index = Array.from(orderItem.parentElement.children).indexOf(orderItem) - 1;
+                    if (index >= 0) this.removeFromOrder(index);
+                } else {
+                    const customSubmit = e.target.closest('.custom-amount-submit');
+                    if (customSubmit) this.submitCustomAmount();
                 }
             }
         });
+
+        // Bind custom amount input enter key
+        const customAmountInput = document.getElementById('custom-amount');
+        if (customAmountInput) {
+            customAmountInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') this.submitCustomAmount();
+            });
+        }
     }
 
     bindPopupEvents() {
@@ -66,16 +73,37 @@
         const closeBtn = popup.querySelector('.close-popup');
 
         viewButton.addEventListener('click', () => {
-            // Update breakdown before showing
             this.updateDisplay();
-            popup.style.display = 'flex';
+            this.showPopup();
         });
 
-        closeBtn.addEventListener('click', () => {
-            popup.style.display = 'none';
+        closeBtn.addEventListener('click', () => this.hidePopup());
+
+        popup.addEventListener('click', (e) => {
+            if (e.target === popup) this.hidePopup();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && popup.classList.contains('show')) {
+                this.hidePopup();
+            }
         });
     }
 
+    showPopup() {
+        const popup = document.querySelector('.cost-popup');
+        popup.style.display = 'flex';
+        popup.offsetHeight; // force reflow
+        popup.classList.add('show');
+    }
+
+    hidePopup() {
+        const popup = document.querySelector('.cost-popup');
+        popup.classList.remove('show');
+        setTimeout(() => {
+            popup.style.display = 'none';
+        }, 300);
+    }
 
     getProductInfo(index) {
         const products = [
@@ -91,29 +119,22 @@
         const quantityControls = document.querySelectorAll('.frame-14');
         const quantityDisplay = quantityControls[productIndex].querySelector('.frame-16 .text-wrapper-6');
         let currentQuantity = parseInt(quantityDisplay.textContent);
-
         currentQuantity = Math.max(0, currentQuantity + change);
         quantityDisplay.textContent = currentQuantity;
     }
 
     addToOrder(productIndex) {
+        if (this.isAnimatingRemoveAll) return; // block during animation
+
         const product = this.getProductInfo(productIndex);
         const quantityControls = document.querySelectorAll('.frame-14');
         let quantity = parseInt(quantityControls[productIndex].querySelector('.frame-16 .text-wrapper-6').textContent);
+        if (quantity === 0) quantity = 1;
 
-        // If quantity is 0, add 1 item when clicking the plate
-        if (quantity === 0) {
-            quantity = 1;
-        }
-
-        // Check if item already exists in order
         const existingItemIndex = this.orderItems.findIndex(item => item.name === product.name);
-
         if (existingItemIndex >= 0) {
-            // Update existing item
             this.orderItems[existingItemIndex].quantity += quantity;
         } else {
-            // Add new item
             this.orderItems.push({
                 name: product.name,
                 price: product.price,
@@ -121,26 +142,45 @@
             });
         }
 
-        // Reset quantity display
         quantityControls[productIndex].querySelector('.frame-16 .text-wrapper-6').textContent = '0';
-
         this.updateDisplay();
     }
 
     removeFromOrder(index) {
         if (index >= 0 && index < this.orderItems.length) {
-            // Decrease quantity by 1
             this.orderItems[index].quantity -= 1;
-
-            // If quantity reaches 0, remove the item completely
-            if (this.orderItems[index].quantity <= 0) {
-                this.orderItems.splice(index, 1);
-            }
-
+            if (this.orderItems[index].quantity <= 0) this.orderItems.splice(index, 1);
             this.updateDisplay();
         }
     }
 
+    submitCustomAmount() {
+        if (this.isAnimatingRemoveAll) return; // block during animation
+
+        const customAmountInput = document.getElementById('custom-amount');
+        if (!customAmountInput) return;
+
+        let inputValue = customAmountInput.value.trim();
+        if (inputValue.startsWith('$')) inputValue = inputValue.substring(1);
+        const amount = parseFloat(inputValue);
+        if (isNaN(amount) || amount <= 0) {
+            alert('Please enter a valid amount greater than $0.00');
+            return;
+        }
+
+        const existingCustomIndex = this.orderItems.findIndex(item =>
+            item.name === 'Custom Amount' && item.price === amount
+        );
+
+        if (existingCustomIndex >= 0) {
+            this.orderItems[existingCustomIndex].quantity += 1;
+        } else {
+            this.orderItems.push({ name: 'Custom Amount', price: amount, quantity: 1 });
+        }
+
+        customAmountInput.value = '';
+        this.updateDisplay();
+    }
 
     // ===== CALCULATIONS =====
     calculateTotalBeforeTax() {
@@ -161,20 +201,15 @@
 
     // ===== DISPLAY UPDATES =====
     updateDisplay() {
-        const beforeTaxElement = document.querySelector('.before-tax');
-        const serviceElement = document.querySelector('.service-charge');
-        const gstElement = document.querySelector('.gst');
-        const totalElement = document.querySelector('.text-wrapper-3'); // main total element
-
         const beforeTax = this.calculateTotalBeforeTax();
         const serviceCharge = this.calculateServiceCharge();
         const gst = this.calculateGST();
         const afterTax = this.calculateTotalAfterTax();
 
-        if (beforeTaxElement) beforeTaxElement.textContent = `$${beforeTax.toFixed(2)}`;
-        if (serviceElement) serviceElement.textContent = `$${serviceCharge.toFixed(2)}`;
-        if (gstElement) gstElement.textContent = `$${gst.toFixed(2)}`;
-        if (totalElement) totalElement.textContent = `$${afterTax.toFixed(2)}`;
+        document.querySelectorAll('.before-tax').forEach(el => el.textContent = `$${beforeTax.toFixed(2)}`);
+        document.querySelectorAll('.service-charge').forEach(el => el.textContent = `$${serviceCharge.toFixed(2)}`);
+        document.querySelectorAll('.gst').forEach(el => el.textContent = `$${gst.toFixed(2)}`);
+        document.querySelectorAll('.text-wrapper-3, .after-tax').forEach(el => el.textContent = `$${afterTax.toFixed(2)}`);
 
         this.updateOrderHistory();
     }
@@ -183,19 +218,78 @@
         const orderHistoryContainer = document.querySelector('.frame-23');
         const header = orderHistoryContainer.querySelector('.frame-24');
 
-        // Clear existing order items (keep header)
-        const existingItems = orderHistoryContainer.querySelectorAll('article');
+        // Remove all existing items
+        const existingItems = orderHistoryContainer.querySelectorAll('article, .empty-state');
         existingItems.forEach(item => item.remove());
 
-        // Add new order items
-        this.orderItems.forEach((item, index) => {
-            const orderItemElement = this.createOrderItemElement(item, index);
-            orderHistoryContainer.appendChild(orderItemElement);
-        });
+        // Add order items
+        if (this.orderItems.length === 0) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'empty-state';
+            emptyState.textContent = 'No items yet';
+            orderHistoryContainer.appendChild(emptyState);
+        } else {
+            this.orderItems.forEach((item, index) => {
+                const orderItemElement = this.createOrderItemElement(item, index);
+                orderHistoryContainer.appendChild(orderItemElement);
+            });
+        }
 
-        // Show/hide "View All" button based on whether there are items
-        const viewAllButton = header.querySelector('.text-wrapper-8');
-        viewAllButton.style.display = this.orderItems.length > 0 ? 'block' : 'none';
+        // Update Remove All button
+        const removeAllButton = header.querySelector('.text-wrapper-8');
+        removeAllButton.textContent = "Remove All";
+        removeAllButton.style.display = this.orderItems.length > 0 ? 'block' : 'none';
+        removeAllButton.classList.remove('remove-all-removing');
+
+        removeAllButton.onclick = () => {
+            document.getElementById('removeAllPopup').classList.add('show');
+        };
+
+        // Confirm Remove All
+        document.getElementById('confirmRemoveAll').onclick = () => {
+            const items = [...orderHistoryContainer.querySelectorAll('article')];
+
+            document.getElementById('removeAllPopup').classList.remove('show');
+            this.isAnimatingRemoveAll = true;
+
+            // Animate items
+            items.forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.1}s`;
+                item.classList.add('order-removing');
+            });
+
+            removeAllButton.classList.add('remove-all-removing');
+
+            const totalBefore = this.calculateTotalBeforeTax();
+            const serviceChargeBefore = this.calculateServiceCharge();
+            const gstBefore = this.calculateGST();
+            const totalAfterBefore = this.calculateTotalAfterTax();
+
+            const stagger = 100;
+            const animationLength = 400;
+            const totalDuration = items.length * stagger + animationLength;
+            const frameRate = 60;
+            const totalFrames = Math.round((totalDuration / 1000) * frameRate);
+            let frame = 0;
+
+            const animateTotals = () => {
+                frame++;
+                const progress = 1 - frame / totalFrames;
+                document.querySelectorAll('.before-tax').forEach(el => el.textContent = `$${(totalBefore * progress).toFixed(2)}`);
+                document.querySelectorAll('.service-charge').forEach(el => el.textContent = `$${(serviceChargeBefore * progress).toFixed(2)}`);
+                document.querySelectorAll('.gst').forEach(el => el.textContent = `$${(gstBefore * progress).toFixed(2)}`);
+                document.querySelectorAll('.text-wrapper-3, .after-tax').forEach(el => el.textContent = `$${(totalAfterBefore * progress).toFixed(2)}`);
+
+                if (frame < totalFrames) requestAnimationFrame(animateTotals);
+            };
+            animateTotals();
+
+            setTimeout(() => {
+                this.orderItems = [];
+                this.isAnimatingRemoveAll = false;
+                this.updateDisplay();
+            }, totalDuration);
+        };
     }
 
     createOrderItemElement(item, index) {
@@ -203,22 +297,21 @@
         article.className = index % 2 === 0 ? 'frame-25' : 'frame-28';
 
         article.innerHTML = `
-      <div class="text-wrapper-9">${item.quantity}x ${item.name}</div>
-      <div class="frame-26">
-        <div class="text-wrapper-10">$${(item.price * item.quantity).toFixed(2)}</div>
-        <button class="frame-wrapper" type="button" aria-label="Remove order item">
-          <div class="frame-27">
-            <span class="text-wrapper-6">Remove</span>
-          </div>
-        </button>
-      </div>
-    `;
-
+            <div class="text-wrapper-9">${item.quantity}x ${item.name}</div>
+            <div class="frame-26">
+                <div class="text-wrapper-10">$${(item.price * item.quantity).toFixed(2)}</div>
+                <button class="frame-wrapper" type="button" aria-label="Remove order item">
+                    <div class="frame-27">
+                        <span class="text-wrapper-6">Remove</span>
+                    </div>
+                </button>
+            </div>
+        `;
         return article;
     }
 }
 
-// Initialize the dashboard when DOM is loaded
+// Initialize dashboard
 document.addEventListener('DOMContentLoaded', () => {
     new OrderDashboard();
 });
