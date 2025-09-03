@@ -56,12 +56,14 @@ class OrderDashboard {
         });
 
         // Bind custom amount input enter key
-        const customAmountInput = document.getElementById('custom-amount');
-        if (customAmountInput) {
-            customAmountInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') this.submitCustomAmount();
-            });
-        }
+        // Bind custom amount button
+const addCustomButton = document.getElementById('add-custom-btn');
+if (addCustomButton) {
+    addCustomButton.addEventListener('click', () => {
+        this.submitCustomAmount();
+    });
+}
+
     }
 
     bindPopupEvents() {
