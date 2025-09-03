@@ -62,13 +62,15 @@ class OrderDashboard {
         }
 
         // Bind custom amount button
-        const addCustomButton = document.getElementById('add-custom-btn');
-        if (addCustomButton) {
-            addCustomButton.addEventListener('click', (e) => {
-                e.preventDefault(); // prevent form reload
-                this.submitCustomAmount();
-            });
-        }
+        // Bind custom amount button
+const addCustomButton = document.querySelector('.custom-amount-submit button');
+if (addCustomButton) {
+    addCustomButton.type = "button"; // prevent form submit
+    addCustomButton.addEventListener('click', () => {
+        this.submitCustomAmount();
+    });
+}
+
     }
 
     bindPopupEvents() {
