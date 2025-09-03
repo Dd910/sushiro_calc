@@ -1,1 +1,877 @@
+html, body {
+    touch-action: manipulation; /* Prevent double-tap zoom, but allow scroll and tap */
+    overflow-x: hidden; /* Prevent horizontal scrolling on body */
+}
 
+.journey {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* full viewport height */
+    width: 100vw; /* full viewport width */
+    align-items: center; /* center main content horizontally */
+    position: relative;
+    background-color: #ffffff;
+    overflow-y: auto; /* allow scrolling if content exceeds screen */
+    overflow-x: hidden; /* prevent horizontal scrolling */
+}
+
+
+    .journey .frame {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* center everything inside horizontally */
+        width: 100%; /* take full width */
+        max-width: 390px; /* keep original design width */
+        gap: 24px;
+        position: relative;
+    }
+
+
+        .journey .frame::-webkit-scrollbar {
+            width: 0;
+            display: none;
+        }
+
+    .journey .div {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 390px;
+        align-items: flex-start;
+        gap: 24px;
+        padding: 24px 24px 0px;
+        position: relative;
+        flex: 0 0 auto;
+        box-sizing: border-box;
+    }
+
+    .journey .img {
+        position: relative;
+        width: 100%;
+        max-width: 342px;
+        flex: 0 0 auto;
+    }
+
+    .journey .group-wrapper {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 48px;
+        position: relative;
+        flex: 0 0 auto;
+    }
+
+    .journey .group {
+        position: relative;
+        width: 100%;
+        max-width: 342px;
+        height: 681px;
+    }
+
+    .journey .div-wrapper {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        gap: 116px;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .journey .text-wrapper {
+        position: relative;
+        width: fit-content;
+        margin-top: -1.00px;
+        font-family: "Poppins", Helvetica;
+        font-weight: 700;
+        color: #272727;
+        font-size: 16px;
+        letter-spacing: 0;
+        line-height: normal;
+    }
+
+    .journey .frame-2 {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        position: absolute;
+        top: 34px;
+        left: 0;
+    }
+
+    .journey .frame-3 {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        flex: 0 0 auto;
+    }
+
+    .journey .frame-4 {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        position: relative;
+        flex: 0 0 auto;
+    }
+
+    .journey .text-wrapper-2 {
+        position: relative;
+        width: fit-content;
+        margin-top: -1.00px;
+        font-family: "Poppins", Helvetica;
+        font-weight: 500;
+        color: #4f4f4f;
+        font-size: 12px;
+        letter-spacing: 0;
+        line-height: normal;
+    }
+
+    .journey .text-wrapper-3 {
+        font-size: 28px;
+        position: relative;
+        width: fit-content;
+        font-family: "Poppins", Helvetica;
+        font-weight: 700;
+        color: #272727;
+        letter-spacing: 0;
+        line-height: normal;
+    }
+
+    .journey .frame-wrapper {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        position: relative;
+        flex: 0 0 auto;
+    }
+
+    .journey .frame-5 {
+        display: inline-flex;
+        justify-content: center;
+        gap: 10px;
+        padding: 4px 12px;
+        flex: 0 0 auto;
+        background-color: #ffebeb;
+        align-items: center;
+        position: relative;
+        border-radius: 6px;
+    }
+
+    .journey .text-wrapper-4 {
+        color: #b81d23;
+        position: relative;
+        width: fit-content;
+        margin-top: -1.00px;
+        font-family: "Poppins", Helvetica;
+        font-weight: 600;
+        font-size: 12px;
+        letter-spacing: 0;
+        line-height: normal;
+    }
+
+    .journey .frame-6 {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+        position: relative;
+        flex: 0 0 auto;
+    }
+
+    .journey .frame-7 {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        position: relative;
+        flex: 0 0 auto;
+    }
+
+    .journey .frame-8 {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        position: relative;
+        flex: 0 0 auto;
+    }
+
+    .journey .frame-9 {
+        gap: 8px;
+        display: flex;
+        align-items: center;
+        position: relative;
+        align-self: stretch;
+        width: 100%;
+        flex: 0 0 auto;
+    }
+
+    .journey .frame-10 {
+        display: inline-flex;
+        align-items: flex-start;
+        gap: 16px;
+        position: relative;
+        flex: 0 0 auto;
+    }
+
+    .journey .frame-11 {
+        display: flex;
+        flex-direction: column;
+        width: 72px;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+    }
+
+    .journey .frame-12 {
+        position: relative;
+        align-self: stretch;
+        width: 100%;
+        height: 71px;
+        background-image: url(https://c.animaapp.com/V0etzIc5/img/image-470@2x.png);
+        background-size: cover;
+        background-position: 50% 50%;
+    }
+
+    .journey .frame-13 {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        position: relative;
+        flex: 0 0 auto;
+    }
+
+    .journey .text-wrapper-5 {
+        position: relative;
+        width: fit-content;
+        margin-top: -1.00px;
+        font-family: "Poppins", Helvetica;
+        font-weight: 700;
+        color: #272727;
+        font-size: 14px;
+        text-align: center;
+        letter-spacing: 0;
+        line-height: normal;
+    }
+
+    .journey .frame-14 {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        position: relative;
+        flex: 0 0 auto;
+    }
+
+    .journey .frame-15 {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 2px 4px;
+        position: relative;
+        flex: 0 0 auto;
+        background-color: #bcb4b4;
+        border-radius: 4px;
+    }
+
+    .journey .text-wrapper-6 {
+        position: relative;
+        width: fit-content;
+        margin-top: -1.00px;
+        font-family: "Poppins", Helvetica;
+        font-weight: 600;
+        color: #ffffff;
+        font-size: 12px;
+        letter-spacing: 0;
+        line-height: normal;
+    }
+
+    .journey .frame-16 {
+        display: inline-flex;
+        justify-content: center;
+        gap: 10px;
+        padding: 4px 8px;
+        flex: 0 0 auto;
+        background-color: #b81d23;
+        align-items: center;
+        position: relative;
+        border-radius: 6px;
+    }
+
+    .journey .frame-17 {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 2px 4px;
+        position: relative;
+        flex: 0 0 auto;
+        background-color: #bcb4b5;
+        border-radius: 4px;
+    }
+
+    .journey .frame-18 {
+        background-image: url(https://c.animaapp.com/V0etzIc5/img/image-469@2x.png);
+        background-size: cover;
+        background-position: 50% 50%;
+        position: relative;
+        align-self: stretch;
+        width: 100%;
+        height: 71px;
+    }
+
+    .journey .frame-19 {
+        background-image: url(https://c.animaapp.com/V0etzIc5/img/image-467@2x.png);
+        background-size: cover;
+        background-position: 50% 50%;
+        position: relative;
+        align-self: stretch;
+        width: 100%;
+        height: 71px;
+    }
+
+    .journey .image-wrapper {
+        position: relative;
+        align-self: stretch;
+        width: 100%;
+        height: 71px;
+    }
+
+    .journey .image {
+        position: absolute;
+        width: 72px;
+        height: 72px;
+        top: 0;
+        left: 0;
+        aspect-ratio: 1.01;
+        object-fit: cover;
+    }
+
+    .journey .frame-20 {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: flex-start;
+        gap: 10px;
+        position: relative;
+        flex: 0 0 auto;
+    }
+
+    .journey .frame-21 {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-around;
+        gap: 10px;
+        position: relative;
+        flex: 0 0 auto;
+    }
+
+    .journey .frame-22 {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        padding: 8px 12px;
+        background-color: #fafafa;
+        align-items: center;
+        position: relative;
+        border-radius: 6px;
+        box-sizing: border-box;
+    }
+
+    .journey .text-wrapper-7 {
+        position: relative;
+        width: fit-content;
+        font-family: "Poppins", Helvetica;
+        font-weight: 600;
+        color: #2e2e2e;
+        font-size: 12px;
+        letter-spacing: 0;
+        line-height: normal;
+    }
+
+    .journey .frame-23 {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        position: relative;
+        flex: 0 0 auto;
+        max-height: 300px;
+        overflow-y: scroll; /* Always show scrollbar to prevent shifting */
+        width: 100%;
+        scrollbar-gutter: stable; /* Reserve space for scrollbar */
+    }
+
+        .journey .frame-23::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .journey .frame-23::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .journey .frame-23::-webkit-scrollbar-thumb {
+            background: #b81d23;
+            border-radius: 3px;
+        }
+
+        .journey .frame-23::-webkit-scrollbar-thumb:hover {
+            background: #9a1519;
+        }
+
+        /* For browsers that don't support scrollbar-gutter */
+        .journey .frame-23 {
+            padding-right: 6px; /* Reserve space for scrollbar */
+            margin-right: -6px; /* Compensate for the padding */
+        }
+
+    .journey .frame-24 {
+        justify-content: space-between;
+        display: flex;
+        align-items: center;
+        position: relative;
+        align-self: stretch;
+        width: 100%;
+        flex: 0 0 auto;
+    }
+
+    .journey .text-wrapper-8 {
+        color: #272727;
+        position: relative;
+        width: fit-content;
+        margin-top: -1.00px;
+        font-family: "Poppins", Helvetica;
+        font-weight: 600;
+        font-size: 12px;
+        letter-spacing: 0;
+        line-height: normal;
+    }
+
+    .journey .frame-25 {
+        display: flex;
+        width: 100%;
+        min-height: 42px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        position: relative;
+        background-color: #fafafa;
+        border-radius: 6px;
+        flex-shrink: 0;
+        box-sizing: border-box;
+    }
+
+    .journey .text-wrapper-9 {
+        position: relative;
+        width: fit-content;
+        font-family: "Poppins", Helvetica;
+        font-weight: 500;
+        color: #4f4f4f;
+        font-size: 12px;
+        letter-spacing: 0;
+        line-height: normal;
+        flex-shrink: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 180px;
+    }
+
+    .journey .frame-26 {
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        position: relative;
+        flex: 0 0 auto;
+        flex-shrink: 0;
+    }
+
+    .journey .text-wrapper-10 {
+        font-size: 14px;
+        position: relative;
+        width: fit-content;
+        font-family: "Poppins", Helvetica;
+        font-weight: 700;
+        color: #272727;
+        letter-spacing: 0;
+        line-height: normal;
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+
+    .journey .frame-27 {
+        display: inline-flex;
+        justify-content: center;
+        gap: 10px;
+        padding: 4px 12px;
+        flex: 0 0 auto;
+        background-color: #b81d23;
+        align-items: center;
+        position: relative;
+        border-radius: 6px;
+        flex-shrink: 0;
+        min-width: 60px;
+    }
+
+    .journey .frame-28 {
+        display: flex;
+        width: 100%;
+        min-height: 42px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        position: relative;
+        background-color: #fafafa;
+        border-radius: 6px;
+        flex-shrink: 0;
+        box-sizing: border-box;
+    }
+
+    .journey .rectangle {
+        position: absolute;
+        width: 100%;
+        max-width: 390px;
+        height: 222px;
+        top: 579px;
+        left: 0;
+        background: linear-gradient( 180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100% );
+    }
+/* Original CSS code should be injected here */
+/* Popup Styles with Animation */
+.cost-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.cost-popup.show {
+    background-color: rgba(0,0,0,0.5);
+    opacity: 1;
+    visibility: visible;
+}
+
+.cost-popup-content {
+    background-color: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-family: "Poppins", Helvetica, sans-serif;
+    transform: scale(0.7) translateY(-50px);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.cost-popup.show .cost-popup-content {
+    transform: scale(1) translateY(0);
+}
+
+    .cost-popup-content h2 {
+        margin: 0;
+        font-size: 18px;
+        text-align: center;
+        font-weight: bold;
+        color: #272727;
+        margin-bottom: 8px;
+    }
+
+.breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.breakdown-row:last-of-type {
+    border-bottom: 2px solid #b81d23;
+    margin-top: 0px;
+    padding-top: 12px;
+}
+
+.total-row {
+    font-weight: 700;
+    font-size: 16px;
+    color: #272727;
+}
+
+.close-popup {
+    margin-top: 16px;
+    padding: 10px 20px;
+    background-color: #b81d23;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    border: none;
+    font-family: "Poppins", Helvetica;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.close-popup:hover {
+    background-color: #9a1519;
+    transform: translateY(-1px);
+}
+
+.close-popup:active {
+    transform: translateY(0);
+}
+
+/* Additional styles for enhanced semantic elements and accessibility */
+button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+    button:hover {
+        opacity: 0.8;
+    }
+
+    button:focus {
+        outline: 2px solid #4a90e2;
+        outline-offset: 2px;
+    }
+
+input {
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    outline: none;
+}
+
+    input:focus {
+        outline: 2px solid #4a90e2;
+        outline-offset: 2px;
+    }
+
+/* Ensure interactive elements maintain visual consistency */
+.frame-5:hover,
+.frame-15:hover,
+.frame-17:hover,
+.frame-27:hover {
+    opacity: 0.9;
+}
+
+.text-wrapper-8 {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+    .text-wrapper-8:hover {
+        text-decoration: underline;
+    }
+
+/* Maintain button styling for quantity controls */
+.frame-wrapper button {
+    display: contents;
+}
+
+/* Make product images and prices clickable */
+.frame-12,
+.frame-18,
+.frame-19,
+.image-wrapper,
+.text-wrapper-5 {
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+    .frame-12:hover,
+    .frame-18:hover,
+    .frame-19:hover,
+    .image-wrapper:hover,
+    .text-wrapper-5:hover {
+        opacity: 0.8;
+    }
+
+/* Add visual feedback for clickable elements */
+.frame-11:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease;
+}
+
+/* Ensure proper focus states for all interactive elements */
+[role="button"]:focus,
+button:focus {
+    outline: 2px solid #4a90e2;
+    outline-offset: 2px;
+}
+
+/* Screen reader improvements */
+[aria-hidden="true"] {
+    pointer-events: none;
+}
+
+/* Custom amount input styling */
+.custom-amount-input {
+    position: relative;
+    width: 100px;
+    margin-left: 40px;
+    font-family: "Poppins", Helvetica;
+    font-weight: 700;
+    color: #272727;
+    font-size: 14px;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px 8px;
+    background-color: #fff;
+}
+
+.custom-amount-input:focus {
+    outline: 2px solid #b81d23;
+    outline-offset: 2px;
+    border-color: #b81d23;
+}
+
+.custom-amount-submit {
+    display: flex;
+    justify-content: center;
+    margin-left: 10px;
+}
+
+/* Confirm Remove All Popup */
+.remove-all-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.remove-all-popup.show {
+    background-color: rgba(0,0,0,0.5);
+    opacity: 1;
+    visibility: visible;
+}
+
+.remove-all-popup-content {
+    background-color: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-family: "Poppins", Helvetica, sans-serif;
+    transform: scale(0.7) translateY(-50px);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.remove-all-popup.show .remove-all-popup-content {
+    transform: scale(1) translateY(0);
+}
+
+.remove-all-popup-content h2 {
+    margin: 0;
+    font-size: 16px;
+    text-align: center;
+    font-weight: 600;
+    color: #272727;
+}
+
+.remove-all-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.remove-all-buttons button {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.remove-all-buttons .confirm-remove {
+    background-color: #b81d23;
+    color: #fff;
+}
+
+.remove-all-buttons .confirm-remove:hover {
+    background-color: #9a1519;
+}
+
+.remove-all-buttons .cancel-remove {
+    background-color: #f0f0f0;
+    color: #272727;
+}
+
+.remove-all-buttons .cancel-remove:hover {
+    background-color: #e0e0e0;
+}
+
+.remove-all-removing {
+  animation: fadeSlideOut 0.3s forwards;
+}
+
+@keyframes fadeSlideOut {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+
+.order-removing {
+  animation: fadeSlideOut 0.3s forwards;
+}
+
+.empty-state {
+    width: 100%;
+    text-align: center;
+    font-family: "Poppins", Helvetica;
+    font-size: 14px;
+    font-weight: 500;
+    color: #4f4f4f;
+    padding: 12px 0;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
