@@ -23,13 +23,8 @@ class OrderDashboard {
             const increaseBtn = control.querySelector('.frame-15').parentElement;
             const decreaseBtn = control.querySelector('.frame-17').parentElement;
 
-            increaseBtn.addEventListener('click', () => {
-                this.updateQuantity(index, 1);
-            });
-
-            decreaseBtn.addEventListener('click', () => {
-                this.updateQuantity(index, -1);
-            });
+            increaseBtn.addEventListener('click', () => this.updateQuantity(index, 1));
+            decreaseBtn.addEventListener('click', () => this.updateQuantity(index, -1));
         });
 
         // Bind product selection
@@ -56,14 +51,24 @@ class OrderDashboard {
         });
 
         // Bind custom amount input enter key
-        // Bind custom amount button
-const addCustomButton = document.getElementById('add-custom-btn');
-if (addCustomButton) {
-    addCustomButton.addEventListener('click', () => {
-        this.submitCustomAmount();
-    });
-}
+        const customAmountInput = document.getElementById('custom-amount');
+        if (customAmountInput) {
+            customAmountInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // prevent form reload
+                    this.submitCustomAmount();
+                }
+            });
+        }
 
+        // Bind custom amount button
+        const addCustomButton = document.getElementById('add-custom-btn');
+        if (addCustomButton) {
+            addCustomButton.addEventListener('click', (e) => {
+                e.preventDefault(); // prevent form reload
+                this.submitCustomAmount();
+            });
+        }
     }
 
     bindPopupEvents() {
