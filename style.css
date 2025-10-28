@@ -3,6 +3,10 @@ html, body {
     overflow-x: hidden; /* Prevent horizontal scrolling on body */
 }
 
+.body-no-scroll {
+    overflow: hidden;
+}
+
 .journey {
     display: flex;
     flex-direction: column;
