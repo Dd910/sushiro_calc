@@ -1080,14 +1080,17 @@ button:focus {
 .quantity-btn {
         display: inline-flex;
         justify-content: center;
+        margin-left: 2px;
         gap: 10px;
-        width: 20px;
+        width: 30px;
+        height: 30px;
         flex: 0 0 auto;
         background-color: #b81d23;
         align-items: center;
         position: relative;
         border-radius: 6px;
         font-family: "Poppins", Helvetica;
+        font-size: 20px;
         color: #fff;
 }
 
