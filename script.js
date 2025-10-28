@@ -349,9 +349,34 @@ class OrderDashboard {
 }
 
 
-
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     new OrderDashboard();
+});
+
+const body = document.body;
+const orderPanel = document.querySelector('.frame-23-wrapper');
+const inputs = orderPanel.querySelectorAll('input');
+
+function lockBodyScroll() {
+    body.style.overflow = 'hidden';
+}
+
+function unlockBodyScroll() {
+    body.style.overflow = '';
+}
+
+// Lock scroll when cart is open
+body.classList.add('body-no-scroll'); // or use body.style.overflow = 'hidden'
+
+// Re-lock scroll if input focuses
+inputs.forEach(input => {
+    input.addEventListener('focus', () => {
+        setTimeout(lockBodyScroll, 50); // slight delay to override mobile behavior
+    });
+
+    input.addEventListener('blur', () => {
+        setTimeout(lockBodyScroll, 50);
+    });
 });
