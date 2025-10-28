@@ -27,9 +27,7 @@ class OrderDashboard {
                     if (!this.isAnimatingRemoveAll) this.addToOrder(index);
                 });
 
-                priceElement.addEventListener('click', () => {
-                    if (!this.isAnimatingRemoveAll) this.addToOrder(index);
-                });
+
             }
         });
 
@@ -232,65 +230,126 @@ class OrderDashboard {
     }
 
     animateRemoveAll() {
-        const container = document.querySelector('.frame-23');
-        const items = [...container.querySelectorAll('article')];
-        const removeAllBtn = container.querySelector('.text-wrapper-8');
-        const plateCounters = document.querySelectorAll('.frame-16 .text-wrapper-6');
+    const container = document.querySelector('.frame-23');
+    const items = [...container.querySelectorAll('article')];
+    const removeAllBtn = container.querySelector('.text-wrapper-8');
+    const plateCounters = document.querySelectorAll('.frame-16 .text-wrapper-6');
 
-        document.getElementById('removeAllPopup').classList.remove('show');
+    // hide confirm popup
+    document.getElementById('removeAllPopup').classList.remove('show');
 
-        const dashboard = this;
-        const originalAdd = dashboard.addToOrder;
-        dashboard.addToOrder = () => {};
+    const dashboard = this;
+    const originalAdd = dashboard.addToOrder;
+    dashboard.addToOrder = () => {}; // temporarily disable adding
 
-        const totalBefore = dashboard.calculateTotalBeforeTax();
-        const serviceBefore = dashboard.calculateServiceCharge();
-        const gstBefore = dashboard.calculateGST();
-        const totalAfterBefore = dashboard.calculateTotalAfterTax();
-        const plateValues = Array.from(plateCounters).map(c => parseInt(c.textContent));
+    // capture starting values (numbers only)
+    const totalBefore = dashboard.calculateTotalBeforeTax();
+    const serviceBefore = dashboard.calculateServiceCharge();
+    const gstBefore = dashboard.calculateGST();
+    const totalAfterBefore = dashboard.calculateTotalAfterTax();
+    const plateValues = Array.from(plateCounters).map(c => parseInt(c.textContent) || 0);
 
-        items.forEach((item, idx) => { item.style.animationDelay = `${idx * 0.1}s`; item.classList.add('order-removing'); });
-        removeAllBtn.classList.add('remove-all-removing');
+    // animate item removal classes for visual effect
+    items.forEach((item, idx) => {
+        item.style.animationDelay = `${idx * 0.05}s`;
+        item.classList.add('order-removing');
+    });
+    removeAllBtn.classList.add('remove-all-removing');
 
-        const duration = 600;
-        const startTime = performance.now();
+    const duration = 600; // ms
+    const startTime = performance.now();
 
-        const animate = (time) => {
-            const elapsed = time - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const ease = 1 - Math.pow(1 - progress, 3) * Math.cos(progress * Math.PI * 2.5);
+    const animate = (time) => {
+        const elapsed = time - startTime;
+        const progress = Math.min(elapsed / duration, 1);
 
-            document.querySelector('.text-wrapper-3').textContent = `$${(totalBefore * (1 - ease)).toFixed(2)}`;
-            document.querySelector('.service-charge').textContent = `$${(serviceBefore * (1 - ease)).toFixed(2)}`;
-            document.querySelector('.gst').textContent = `$${(gstBefore * (1 - ease)).toFixed(2)}`;
-            document.querySelector('.after-tax').textContent = `$${(totalAfterBefore * (1 - ease)).toFixed(2)}`;
+        // MONOTONIC ease-out cubic (no overshoot, never decreases)
+        const ease = 1 - Math.pow(1 - progress, 3);
 
-            plateCounters.forEach((c, i) => c.textContent = Math.max(0, Math.round(plateValues[i] * (1 - ease))));
+        // Interpolated values (always monotonic because ease is monotonic)
+        const shownBefore = totalBefore * (1 - ease);
+        const shownService = serviceBefore * (1 - ease);
+        const shownGST = gstBefore * (1 - ease);
+        const shownAfter = totalAfterBefore * (1 - ease);
 
-            if (progress < 1) requestAnimationFrame(animate);
-            else { dashboard.orderItems = []; dashboard.updateDisplay(); dashboard.addToOrder = originalAdd; }
-        };
+        // Update currency displays (two decimals)
+        const elBefore = document.querySelector('.text-wrapper-3');
+        const elService = document.querySelector('.service-charge');
+        const elGst = document.querySelector('.gst');
+        const elAfter = document.querySelector('.after-tax');
 
-        requestAnimationFrame(animate);
-    }
+        if (elBefore) elBefore.textContent = `$${shownBefore.toFixed(2)}`;
+        if (elService) elService.textContent = `$${shownService.toFixed(2)}`;
+        if (elGst) elGst.textContent = `$${shownGST.toFixed(2)}`;
+        if (elAfter) elAfter.textContent = `$${shownAfter.toFixed(2)}`;
+
+        // Update plate counters (integer, monotonic)
+        plateCounters.forEach((c, i) => {
+            const newValue = Math.max(0, Math.round(plateValues[i] * (1 - ease)));
+            c.textContent = newValue;
+        });
+
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        } else {
+            // finalize: clear order, refresh UI, restore add behaviour
+            dashboard.orderItems = [];
+            dashboard.updateDisplay();
+            dashboard.addToOrder = originalAdd;
+            // remove any temporary classes
+            items.forEach(item => item.classList.remove('order-removing'));
+            removeAllBtn.classList.remove('remove-all-removing');
+        }
+    };
+
+    requestAnimationFrame(animate);
+}
+
 
     createOrderItemElement(item, idx) {
-        const article = document.createElement('article');
-        article.className = idx % 2 === 0 ? 'frame-25' : 'frame-28';
+    const article = document.createElement('article');
+    article.className = idx % 2 === 0 ? 'frame-25' : 'frame-28';
 
-        article.innerHTML = `
-            <div class="text-wrapper-9">${item.quantity}x ${item.name}</div>
-            <div class="frame-26">
-                <div class="text-wrapper-10">$${(item.price * item.quantity).toFixed(2)}</div>
-                <button class="frame-wrapper" type="button" aria-label="Remove order item">
-                    <div class="frame-27">
-                        <span class="text-wrapper-6">Remove</span>
-                    </div>
-                </button>
+    article.innerHTML = `
+        <div class="text-wrapper-9">x${item.quantity} ${item.name}</div>
+        <div class="frame-26">
+            <div class="text-wrapper-10">$${(item.price * item.quantity).toFixed(2)}</div>
+            <div class="order-quantity-controls">
+                <button class="quantity-btn decrease" type="button" aria-label="Decrease quantity">−</button>
+                <button class="quantity-btn increase" type="button" aria-label="Increase quantity">+</button>
             </div>
-        `;
-        return article;
-    }
+        </div>
+    `;
+
+    const decreaseBtn = article.querySelector('.decrease');
+    const increaseBtn = article.querySelector('.increase');
+
+    decreaseBtn.addEventListener('click', () => {
+        const foundIndex = this.orderItems.findIndex(i => i.name === item.name);
+        if (foundIndex >= 0) {
+            this.orderItems[foundIndex].quantity -= 1;
+            if (this.orderItems[foundIndex].quantity <= 0) {
+                this.orderItems.splice(foundIndex, 1);
+            }
+            this.updateDisplay();
+        }
+    });
+
+    increaseBtn.addEventListener('click', () => {
+        const foundIndex = this.orderItems.findIndex(i => i.name === item.name);
+        if (foundIndex >= 0) {
+            this.orderItems[foundIndex].quantity += 1;
+        } else {
+            this.orderItems.push({ ...item, quantity: 1 });
+        }
+        this.updateDisplay();
+    });
+
+    return article;
+}
+
+
+
 }
 
 document.addEventListener('DOMContentLoaded', () => {
