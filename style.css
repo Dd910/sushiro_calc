@@ -1,10 +1,6 @@
 html, body {
     touch-action: manipulation; /* Prevent double-tap zoom, but allow scroll and tap */
-    overflow-x: hidden; /* Prevent horizontal scrolling on body */
-}
-
-.body-no-scroll {
-    overflow: hidden;
+    overflow: hidden; /* Prevent horizontal scrolling on body */
 }
 
 .journey {
