@@ -422,22 +422,6 @@ html, body {
     max-width: 390px;
 }
 
-
-<!--
-.frame-23::after {
-    content: "";
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 40px; /* height of the fade */
-    pointer-events: none;
-    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
-    opacity: var(--fade-opacity, 0);
-    transition: opacity 0.2s ease-out;
-}
--->
-
     .journey .frame-23 {
         display: inline-flex;
         flex-direction: column;
