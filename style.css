@@ -459,6 +459,11 @@ html, body {
             margin-right: -6px; /* Compensate for the padding */
         }
 
+.frame-23::after {
+    opacity: 0 !important;
+    display: none; /* optional */
+}
+
 .frame-24 {
     position: sticky;
     top: 0; /* stick to the top of .frame-23 */
